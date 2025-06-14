@@ -1,0 +1,48 @@
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Ensure all Python files compile
+        run: python -m compileall -q .
+  
+  import:
+    runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python: ['3.12']
+    steps:
+    - uses: qoomon/actions--access-token@v3
+      id: access-token
+      with:
+        repository: ArtificialHumanoid/pdfLaTeX
+        permissions: |
+          contents: read
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Install dependencies
+      env:
+        GITHUB_TOKEN: ${{ steps.access-token.outputs.token }}
+      run: |
+        echo "$HOME/.local/bin" >> $GITHUB_PATH  # Assign $GITHUB_PATH.
+        curl https://bootstrap.pypa.io/get-pip.py | python3  # Get pip.
+        pip install git+https://oauth2:${GITHUB_TOKEN}@github.com/ArtificialHumanoid/pdfLaTeX#subdirectory=build
+    - name: Verify `site-packages` installation
+      run: python -m utilities.meta.testing_of.packages.test.installations.site_packages
+    - name: Import all Python files
+      run: python -m utilities.meta.testing_of.packages.test.importation.files
+    - name: Import all Python modules
+      run: python -m utilities.meta.testing_of.packages.test.importation.packages
