@@ -27,6 +27,10 @@ jobs:
       id: access-token
       with:
         repository: ArtificialHumanoid/pdfLaTeX
+        repositories: |
+          - ArtificialHumanoid/Utilities
+          - ArtificialHumanoid/Monorepo
+          - ArtificialHumanoid/Mind
         permissions: |
           contents: read
     - name: Set up Python ${{ matrix.python }}
@@ -42,7 +46,7 @@ jobs:
         pip install git+https://oauth2:${GITHUB_TOKEN}@github.com/ArtificialHumanoid/pdfLaTeX#subdirectory=build
     - name: Verify `site-packages` installation
       run: python -m utilities.meta.testing_of.packages.test.installations.site_packages
-    - name: Import all Python files
+    - name: Import all `.py` files
       run: python -m utilities.meta.testing_of.packages.test.importation.files
     - name: Import all Python modules
       run: python -m utilities.meta.testing_of.packages.test.importation.packages
