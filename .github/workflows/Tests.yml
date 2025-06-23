@@ -43,7 +43,8 @@ jobs:
       run: |
         echo "$HOME/.local/bin" >> $GITHUB_PATH  # Assign $GITHUB_PATH.
         curl https://bootstrap.pypa.io/get-pip.py | python3  # Get pip.
-        pip install git+https://oauth2:${GITHUB_TOKEN}@github.com/ArtificialHumanoid/pdfLaTeX#subdirectory=build
+        git config --global url."https://oauth2:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+        pip install git+https://github.com/ArtificialHumanoid/pdfLaTeX#subdirectory=build
     - name: Verify `site-packages` installation
       run: python -m utilities.meta.testing_of.packages.test.installations.site_packages
     - name: Import all `.py` files
